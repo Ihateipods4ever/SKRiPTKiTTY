@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkRiPtKiTtY // SCRIPT GENERATOR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            min-height: 100vh;
+            padding: 10px;
+            overflow-x: auto;
+        }
+
+        .terminal-container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: #000;
+            border: 1px solid #00ff00;
+            border-radius: 0;
+            box-shadow: 0 0 20px #00ff00;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: #001a00;
+            padding: 10px 15px;
+            border-bottom: 1px solid #00ff00;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-title {
+            font-size: 1em;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid #00ff00;
+        }
+
+        .control-close { background: #ff5f56; }
+        .control-minimize { background: #ffbd2e; }
+        .control-maximize { background: #27c93f; }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: 600px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+        }
+
+        .input-panel {
+            border-right: 1px solid #00ff00;
+            padding: 15px;
+            background: #001100;
+        }
+
+        .output-panel {
+            padding: 15px;
+            background: #000;
+            position: relative;
+        }
+
+        .panel-title {
+            color: #00ff00;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #003300;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00ff00;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .terminal-select, .terminal-input, .terminal-textarea {
+            width: 100%;
+            background: #000;
+            border: 1px solid #003300;
+            color: #00ff00;
+            padding: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .terminal-select:focus, .terminal-input:focus, .terminal-textarea:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .terminal-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .generate-btn {
+            width: 100%;
+            background: #002200;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .generate-btn:hover {
+            background: #00ff00;
+            color: #000;
+            text-shadow: 0 0 10px #000;
+        }
+
+        #output {
+            background: #000;
+            color: #00ff00;
+            min-height: 300px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+            border: 1px solid #003300;
+            padding: 12px;
+            font-size: 11px;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .action-btn {
+            background: #002200;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .action-btn:hover {
+            background: #00ff00;
+            color: #000;
+        }
+
+        .status-message {
+            padding: 8px;
+            margin: 8px 0;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid;
+            display: none;
+            font-size: 11px;
+        }
+
+        .status-success {
+            background: #002200;
+            color: #00ff00;
+            border-color: #00ff00;
+            display: block;
+        }
+
+        .status-error {
+            background: #220000;
+            color: #ff4444;
+            border-color: #ff4444;
+            display: block;
+        }
+
+        .validation-panel {
+            margin-top: 15px;
+            padding: 12px;
+            background: #001100;
+            border: 1px solid #003300;
+        }
+
+        .validation-title {
+            color: #00ff00;
+            margin-bottom: 8px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+
+        #validationOutput {
+            color: #00ff00;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .code-keyword { color: #569cd6; }
+        .code-string { color: #ce9178; }
+        .code-comment { color: #6a9955; }
+        .code-function { color: #dcdcaa; }
+        .code-parameter { color: #9cdcfe; }
+        .code-number { color: #b5cea8; }
+        .code-operator { color: #d4d4d4; }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #001100;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #003300;
+            border-radius: 0;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ff00;
+        }
+
+        .kitty-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .kitty {
+            position: absolute;
+            font-size: 16px;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            user-select: none;
+        }
+
+        .history-panel {
+            margin-top: 15px;
+            padding: 12px;
+            background: #001100;
+            border: 1px solid #003300;
+        }
+
+        .history-title {
+            color: #00ff00;
+            margin-bottom: 8px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+
+        .history-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .history-select {
+            width: 100%;
+            background: #000;
+            border: 1px solid #003300;
+            color: #00ff00;
+            padding: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="kitty-bg" id="kittyBg"></div>
+    
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-title">SkRiPtKiTtY // SCRIPT GENERATOR v3.0</div>
+            <div class="terminal-controls">
+                <div class="control-btn control-close"></div>
+                <div class="control-btn control-minimize"></div>
+                <div class="control-btn control-maximize"></div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="input-panel">
+                <div class="panel-title">CONFIGURATION</div>
+                
+                <div class="form-group">
+                    <label class="form-label">SCRIPT TYPE</label>
+                    <select class="terminal-select" id="scriptType">
+                        <option value="system_admin">System Administration</option>
+                        <option value="security_scan">Security Scanner</option>
+                        <option value="web_app">Web Application</option>
+                        <option value="data_processor">Data Processor</option>
+                        <option value="file_organizer">File Organizer</option>
+                        <option value="network_tool">Network Tool</option>
+                        <option value="backup_script">Backup System</option>
+                        <option value="monitoring">System Monitor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">TARGET OS</label>
+                    <select class="terminal-select" id="targetOS">
+                        <option value="linux">Linux</option>
+                        <option value="windows">Windows</option>
+                        <option value="macos">macOS</option>
+                        <option value="cross_platform">Cross-Platform</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">DEVICE TYPE</label>
+                    <select class="terminal-select" id="deviceType">
+                        <option value="server">Server</option>
+                        <option value="workstation">Workstation</option>
+                        <option value="embedded">Embedded System</option>
+                        <option value="mobile">Mobile Device</option>
+                        <option value="network">Network Device</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">LANGUAGE</label>
+                    <select class="terminal-select" id="scriptLanguage">
+                        <option value="bash">Bash</option>
+                        <option value="python">Python</option>
+                        <option value="powershell">PowerShell</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="php">PHP</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">SCRIPT NAME</label>
+                    <input type="text" class="terminal-input" id="scriptName" placeholder="system_tool" value="system_tool">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">SCRIPT PURPOSE</label>
+                    <textarea class="terminal-textarea" id="scriptPurpose">Automate system administration tasks - monitor services, clean logs, manage users, check disk space</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">PARAMETERS</label>
+                    <input type="text" class="terminal-input" id="scriptParameters" placeholder="service_name, log_file, user_account" value="service_name, log_file, user_account, backup_location">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">CODE PREFIX</label>
+                    <input type="text" class="terminal-input" id="codePrefix" placeholder="// Generated by SkRiPtKiTtY" value="// Generated by SkRiPtKiTtY">
+                </div>
+
+                <button class="generate-btn" onclick="generateScript()">
+                    [ GENERATE SCRIPT ]
+                </button>
+
+                <div class="status-message" id="statusMessage"></div>
+
+                <div class="history-panel">
+                    <div class="history-title">SCRIPT HISTORY</div>
+                    <select class="history-select" id="scriptHistory">
+                        <option value="">-- Select a previous script --</option>
+                    </select>
+                    <div class="history-buttons">
+                        <button class="action-btn" onclick="loadFromHistory()">LOAD SELECTED</button>
+                        <button class="action-btn" onclick="clearHistory()">CLEAR HISTORY</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="output-panel">
+                <div class="panel-title">GENERATED SCRIPT</div>
+                <pre id="output"><span class="code-comment">// SELECT OPTIONS AND CLICK [GENERATE SCRIPT]</span>
+<span class="code-comment">// SkRiPtKiTtY READY...</span></pre>
+                
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="downloadScript()">DOWNLOAD</button>
+                    <button class="action-btn" onclick="copyToClipboard()">COPY</button>
+                    <button class="action-btn" onclick="refixCode()">REFIX CODE</button>
+                    <button class="action-btn" onclick="debugAndRewrite()">DEBUG & REWRITE</button>
+                </div>
+
+                <div class="validation-panel">
+                    <div class="validation-title">CODE VALIDATION</div>
+                    <div id="validationOutput">
+                        <span class="code-comment">// Waiting for code generation...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Kitty rain background effect
+        function createKittyRain() {
+            const kittyBg = document.getElementById('kittyBg');
+            const kitties = ["(=^･ω･^=)", "(=^･ｪ･^=)", "(=^･◕･^=)", "(=^･⋏･^=)", "(=^･ｪ･^=))y"];
+            
+            function createKitty() {
+                const kitty = document.createElement('div');
+                kitty.className = 'kitty';
+                kitty.textContent = kitties[Math.floor(Math.random() * kitties.length)];
+                kitty.style.left = Math.random() * 100 + 'vw';
+                kitty.style.fontSize = (Math.random() * 16 + 8) + 'px';
+                kitty.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                kittyBg.appendChild(kitty);
+                
+                const animation = kitty.animate([
+                    { top: '-50px', opacity: 0 },
+                    { top: '100vh', opacity: kitty.style.opacity }
+                ], {
+                    duration: Math.random() * 5000 + 3000,
+                    easing: 'linear'
+                });
+                
+                animation.onfinish = () => {
+                    kitty.remove();
+                };
+            }
+            
+            setInterval(createKitty, 300);
+        }
+
+        // Initialize kitty rain
+        createKittyRain();
+
+        // Store the current raw script for download
+        let currentRawScript = '';
+
+        // Script history management
+        let scriptHistory = JSON.parse(localStorage.getItem('scriptKittyHistory')) || [];
+        
+        function updateHistoryDropdown() {
+            const historySelect = document.getElementById('scriptHistory');
+            historySelect.innerHTML = '<option value="">-- Select a previous script --</option>';
+            
+            scriptHistory.forEach((script, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${script.name} (${script.timestamp})`;
+                historySelect.appendChild(option);
+            });
+        }
+        
+        function saveToHistory(scriptData) {
+            // Limit history to 10 entries
+            if (scriptHistory.length >= 10) {
+                scriptHistory.shift();
+            }
+            
+            scriptHistory.push(scriptData);
+            localStorage.setItem('scriptKittyHistory', JSON.stringify(scriptHistory));
+            updateHistoryDropdown();
+        }
+        
+        function loadFromHistory() {
+            const historySelect = document.getElementById('scriptHistory');
+            const selectedIndex = historySelect.value;
+            
+            if (selectedIndex === "") return;
+            
+            const script = scriptHistory[selectedIndex];
+            
+            // Populate form fields
+            document.getElementById('scriptType').value = script.type;
+            document.getElementById('targetOS').value = script.os;
+            document.getElementById('deviceType').value = script.device;
+            document.getElementById('scriptLanguage').value = script.language;
+            document.getElementById('scriptName').value = script.name;
+            document.getElementById('scriptPurpose').value = script.purpose;
+            document.getElementById('scriptParameters').value = script.parameters;
+            document.getElementById('codePrefix').value = script.prefix;
+            
+            // Display the script
+            document.getElementById('output').innerHTML = applySyntaxHighlighting(script.code, script.language);
+            validateCode(script.code, script.language);
+            
+            // Store the raw script for download
+            currentRawScript = script.code;
+            
+            showStatus('SCRIPT LOADED FROM HISTORY', 'success');
+        }
+        
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all script history?')) {
+                scriptHistory = [];
+                localStorage.removeItem('scriptKittyHistory');
+                updateHistoryDropdown();
+                showStatus('HISTORY CLEARED', 'success');
+            }
+        }
+
+        // Initialize history dropdown
+        updateHistoryDropdown();
+
+        function generateScript() {
+            const scriptType = document.getElementById('scriptType').value;
+            const targetOS = document.getElementById('targetOS').value;
+            const deviceType = document.getElementById('deviceType').value;
+            const language = document.getElementById('scriptLanguage').value;
+            const scriptName = document.getElementById('scriptName').value || 'generated_script';
+            const purpose = document.getElementById('scriptPurpose').value;
+            const parameters = document.getElementById('scriptParameters').value;
+            const prefix = document.getElementById('codePrefix').value;
+
+            if (!purpose) {
+                showStatus('ERROR: PLEASE SPECIFY SCRIPT PURPOSE', 'error');
+                return;
+            }
+
+            showStatus('GENERATING SCRIPT...', 'success');
+
+            // Generate script based on configuration
+            const script = createScript(scriptType, targetOS, deviceType, language, scriptName, purpose, parameters, prefix);
+            
+            // Store the raw script for download
+            currentRawScript = script;
+            
+            // Display with syntax highlighting
+            document.getElementById('output').innerHTML = applySyntaxHighlighting(script, language);
+            
+            // Validate the generated code
+            validateCode(script, language);
+            
+            // Save to history
+            const scriptData = {
+                name: scriptName,
+                type: scriptType,
+                os: targetOS,
+                device: deviceType,
+                language: language,
+                purpose: purpose,
+                parameters: parameters,
+                prefix: prefix,
+                code: script,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            saveToHistory(scriptData);
+            
+            showStatus('SCRIPT GENERATED SUCCESSFULLY', 'success');
+        }
+
+        function createScript(type, os, device, language, name, purpose, parameters, prefix) {
+            const timestamp = new Date().toISOString();
+            
+            let script = '';
+            
+            // Header with configuration info
+            script += `# ============================================\n`;
+            script += `# SCRIPT: ${name}\n`;
+            script += `# TYPE: ${type}\n`;
+            script += `# OS: ${os}\n`;
+            script += `# DEVICE: ${device}\n`;
+            script += `# LANGUAGE: ${language}\n`;
+            script += `# GENERATED: ${timestamp}\n`;
+            script += `# PURPOSE: ${purpose}\n`;
+            script += `# PARAMETERS: ${parameters}\n`;
+            script += `# ============================================\n\n`;
+            
+            // Add prefix if provided
+            if (prefix) {
+                // Convert comment style based on language
+                let formattedPrefix = prefix;
+                if (language === 'python' || language === 'bash') {
+                    formattedPrefix = prefix.replace(/^\/\//, '#').replace(/\n\/\//g, '\n#');
+                }
+                script += `${formattedPrefix}\n\n`;
+            }
+            
+            // Generate script body based on language and type
+            switch(language) {
+                case 'bash':
+                    script += generateBashScript(type, os, device, name, purpose, parameters);
+                    break;
+                case 'python':
+                    script += generatePythonScript(type, os, device, name, purpose, parameters);
+                    break;
+                case 'powershell':
+                    script += generatePowerShellScript(type, os, device, name, purpose, parameters);
+                    break;
+                case 'javascript':
+                    script += generateJavaScriptScript(type, os, device, name, purpose, parameters);
+                    break;
+                case 'php':
+                    script += generatePHPScript(type, os, device, name, purpose, parameters);
+                    break;
+            }
+            
+            return script;
+        }
+
+        function generateBashScript(type, os, device, name, purpose, parameters) {
+            let script = `#!/bin/bash\n\n`;
+            
+            // Add device-specific configurations
+            if (device === 'server') {
+                script += `# Server-specific configurations\n`;
+                script += `LOG_DIR="/var/log"\n`;
+                script += `BACKUP_DIR="/backups"\n\n`;
+            } else if (device === 'workstation') {
+                script += `# Workstation-specific configurations\n`;
+                script += `LOG_DIR="$HOME/logs"\n`;
+                script += `BACKUP_DIR="$HOME/backups"\n\n`;
+            }
+            
+            // Add OS-specific configurations
+            if (os === 'linux') {
+                script += `# Linux-specific configurations\n`;
+                script += `SERVICES=("nginx" "mysql" "ssh")\n\n`;
+            } else if (os === 'macos') {
+                script += `# macOS-specific configurations\n`;
+                script += `SERVICES=("httpd" "mysql" "ssh")\n\n`;
+            }
+            
+            // Add script type specific code
+            if (type === 'system_admin') {
+                script += `# System Administration Script\n`;
+                script += `echo "Starting system administration tasks..."\n\n`;
+                script += `# Check services\n`;
+                script += `for service in "\${SERVICES[@]}"; do\n`;
+                script += `    if systemctl is-active --quiet "$service"; then\n`;
+                script += `        echo "✅ $service is running"\n`;
+                script += `    else\n`;
+                script += `        echo "❌ $service is not running"\n`;
+                script += `    fi\n`;
+                script += `done\n\n`;
+                script += `# Check disk space\n`;
+                script += `DISK_USAGE=\$(df / | awk 'NR==2 {print \$5}' | sed 's/%//')\n`;
+                script += `echo "Disk usage: \$DISK_USAGE%"\n\n`;
+                script += `# Clean up logs\n`;
+                script += `echo "Cleaning up log files..."\n`;
+                script += `find \$LOG_DIR -name "*.log" -type f -mtime +7 -delete\n\n`;
+                script += `echo "System administration tasks completed."\n`;
+            } else if (type === 'security_scan') {
+                script += `# Security Scanner Script\n`;
+                script += `echo "Starting security scan..."\n\n`;
+                script += `# Check for open ports\n`;
+                script += `echo "Checking for open ports..."\n`;
+                script += `netstat -tuln | grep LISTEN\n\n`;
+                script += `# Check for suspicious processes\n`;
+                script += `echo "Checking for suspicious processes..."\n`;
+                script += `ps aux | grep -E "(cryptominer|backdoor|malware)"\n\n`;
+                script += `# Check file permissions\n`;
+                script += `echo "Checking critical file permissions..."\n`;
+                script += `ls -la /etc/passwd\n`;
+                script += `ls -la /etc/shadow\n\n`;
+                script += `echo "Security scan completed."\n`;
+            } else if (type === 'file_organizer') {
+                script += `# File Organizer Script\n`;
+                script += `echo "Starting file organization..."\n\n`;
+                script += `# Organize files by extension\n`;
+                script += `for file in *; do\n`;
+                script += `    if [[ -f "$file" ]]; then\n`;
+                script += `        ext="\${file##*.}"\n`;
+                script += `        mkdir -p "\$ext"\n`;
+                script += `        mv "\$file" "\$ext/"\n`;
+                script += `        echo "Moved \$file to \$ext/"\n`;
+                script += `    fi\n`;
+                script += `done\n\n`;
+                script += `echo "File organization completed."\n`;
+            } else if (type === 'monitoring') {
+                script += `# System Monitoring Script\n`;
+                script += `echo "Starting system monitoring..."\n\n`;
+                script += `# Monitor CPU usage\n`;
+                script += `CPU_USAGE=\$(top -bn1 | grep "Cpu(s)" | awk '{print \$2}' | cut -d'%' -f1)\n`;
+                script += `echo "CPU Usage: \$CPU_USAGE%"\n\n`;
+                script += `# Monitor memory usage\n`;
+                script += `MEMORY_USAGE=\$(free | grep Mem | awk '{printf("%.2f"), \$3/\$2 * 100}')\n`;
+                script += `echo "Memory Usage: \$MEMORY_USAGE%"\n\n`;
+                script += `# Monitor disk space\n`;
+                script += `DISK_USAGE=\$(df / | awk 'NR==2 {print \$5}' | sed 's/%//')\n`;
+                script += `echo "Disk Usage: \$DISK_USAGE%"\n\n`;
+                script += `echo "System monitoring completed."\n`;
+            } else {
+                script += `# Basic script template\n`;
+                script += `echo "Running script: ${name}"\n`;
+                script += `echo "Purpose: ${purpose}"\n`;
+                script += `echo "Script execution completed."\n`;
+            }
+            
+            return script;
+        }
+
+        function generatePythonScript(type, os, device, name, purpose, parameters) {
+            let script = `#!/usr/bin/env python3\n\n`;
+            
+            // Add imports based on script type
+            if (type === 'system_admin') {
+                script += `import os\nimport sys\nimport subprocess\nimport shutil\n\n`;
+            } else if (type === 'security_scan') {
+                script += `import os\nimport socket\nimport subprocess\n\n`;
+            } else if (type === 'file_organizer') {
+                script += `import os\nimport shutil\nfrom pathlib import Path\n\n`;
+            } else if (type === 'monitoring') {
+                script += `import os\nimport psutil\nimport time\n\n`;
+            } else {
+                script += `import os\nimport sys\n\n`;
+            }
+            
+            script += `# ${purpose}\n`;
+            script += `def main():\n`;
+            
+            // Add device-specific code
+            if (device === 'server') {
+                script += `    # Server-specific operations\n`;
+                script += `    log_dir = "/var/log"\n`;
+            } else if (device === 'workstation') {
+                script += `    # Workstation-specific operations\n`;
+                script += `    log_dir = os.path.expanduser("~/logs")\n`;
+            } else if (device === 'mobile') {
+                script += `    # Mobile device-specific operations\n`;
+                script += `    print("Mobile device monitoring active")\n`;
+            }
+            
+            // Add script type specific code
+            if (type === 'system_admin') {
+                script += `    \n    # System administration tasks\n`;
+                script += `    print("Starting system administration...")\n`;
+                script += `    \n    # Check disk usage\n`;
+                script += `    total, used, free = shutil.disk_usage("/")\n`;
+                script += `    print(f"Disk usage: {used // (2**30)}GB / {total // (2**30)}GB")\n`;
+                script += `    \n    # Check services\n`;
+                script += `    services = ["nginx", "mysql", "ssh"]\n`;
+                script += `    for service in services:\n`;
+                script += `        try:\n`;
+                script += `            result = subprocess.run(["systemctl", "is-active", service], \n`;
+                script += `                                    capture_output=True, text=True)\n`;
+                script += `            if result.returncode == 0:\n`;
+                script += `                print(f"✅ {service} is running")\n`;
+                script += `            else:\n`;
+                script += `                print(f"❌ {service} is not running")\n`;
+                script += `        except Exception as e:\n`;
+                script += `            print(f"Error checking {service}: {e}")\n`;
+            } else if (type === 'security_scan') {
+                script += `    \n    # Security scanning tasks\n`;
+                script += `    print("Starting security scan...")\n`;
+                script += `    \n    # Check open ports\n`;
+                script += `    print("Open ports:")\n`;
+                script += `    for port in range(1, 1025):\n`;
+                script += `        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n`;
+                script += `        sock.settimeout(1)\n`;
+                script += `        result = sock.connect_ex(('localhost', port))\n`;
+                script += `        if result == 0:\n`;
+                script += `            print(f"Port {port} is open")\n`;
+                script += `        sock.close()\n`;
+                script += `    \n    # Check running processes\n`;
+                script += `    print("\\nRunning processes:")\n`;
+                script += `    try:\n`;
+                script += `        result = subprocess.run(["ps", "aux"], capture_output=True, text=True)\n`;
+                script += `        print(result.stdout)\n`;
+                script += `    except Exception as e:\n`;
+                script += `        print(f"Error checking processes: {e}")\n`;
+            } else if (type === 'file_organizer') {
+                script += `    \n    # File organization tasks\n`;
+                script += `    print("Organizing files...")\n`;
+                script += `    \n    # Organize by extension\n`;
+                script += `    for item in os.listdir('.'):\n`;
+                script += `        if os.path.isfile(item):\n`;
+                script += `            ext = os.path.splitext(item)[1][1:]  # Get extension without dot\n`;
+                script += `            if ext:\n`;
+                script += `                Path(ext).mkdir(exist_ok=True)\n`;
+                script += `                shutil.move(item, os.path.join(ext, item))\n`;
+                script += `                print(f"Moved {item} to {ext}/")\n`;
+            } else if (type === 'monitoring') {
+                script += `    \n    # System monitoring tasks\n`;
+                script += `    print("Starting system monitoring...")\n`;
+                script += `    \n    # Monitor CPU usage\n`;
+                script += `    cpu_usage = psutil.cpu_percent(interval=1)\n`;
+                script += `    print(f"CPU Usage: {cpu_usage}%")\n`;
+                script += `    \n    # Monitor memory usage\n`;
+                script += `    memory = psutil.virtual_memory()\n`;
+                script += `    print(f"Memory Usage: {memory.percent}%")\n`;
+                script += `    \n    # Monitor disk usage\n`;
+                script += `    disk = psutil.disk_usage('/')\n`;
+                script += `    print(f"Disk Usage: {disk.percent}%")\n`;
+            } else {
+                script += `    # Basic script functionality\n`;
+                script += `    print("Running script: ${name}")\n`;
+                script += `    print("Purpose: ${purpose}")\n`;
+                script += `    print("Script execution completed.")\n`;
+            }
+            
+            script += `\nif __name__ == "__main__":\n`;
+            script += `    main()\n`;
+            
+            return script;
+        }
+
+        function generatePowerShellScript(type, os, device, name, purpose, parameters) {
+            let script = `# PowerShell Script\n`;
+            script += `# ${purpose}\n\n`;
+            
+            if (type === 'system_admin') {
+                script += `Write-Host "Starting system administration tasks..." -ForegroundColor Green\n\n`;
+                script += `# Check services\n`;
+                script += `$services = @("Spooler", "BITS", "Themes")\n`;
+                script += `foreach ($service in $services) {\n`;
+                script += `    $status = Get-Service -Name $service -ErrorAction SilentlyContinue\n`;
+                script += `    if ($status -and $status.Status -eq "Running") {\n`;
+                script += `        Write-Host "✅ $service is running" -ForegroundColor Green\n`;
+                script += `    } else {\n`;
+                script += `        Write-Host "❌ $service is not running" -ForegroundColor Red\n`;
+                script += `    }\n`;
+                script += `}\n\n`;
+                script += `# Check disk space\n`;
+                script += `$disk = Get-WmiObject -Class Win32_LogicalDisk -Filter "DeviceID='C:'"\n`;
+                script += `$freeSpace = [math]::Round($disk.FreeSpace / 1GB, 2)\n`;
+                script += `$totalSpace = [math]::Round($disk.Size / 1GB, 2)\n`;
+                script += `$usedSpace = $totalSpace - $freeSpace\n`;
+                script += `$usagePercent = [math]::Round(($usedSpace / $totalSpace) * 100, 2)\n`;
+                script += `Write-Host "Disk usage: $usagePercent%" -ForegroundColor Yellow\n\n`;
+                script += `Write-Host "System administration tasks completed." -ForegroundColor Green\n`;
+            } else {
+                script += `Write-Host "Running script: ${name}" -ForegroundColor Cyan\n`;
+                script += `Write-Host "Purpose: ${purpose}" -ForegroundColor Cyan\n`;
+                script += `Write-Host "Script execution completed." -ForegroundColor Green\n`;
+            }
+            
+            return script;
+        }
+
+        function generateJavaScriptScript(type, os, device, name, purpose, parameters) {
+            let script = `// JavaScript Script\n`;
+            script += `// ${purpose}\n\n`;
+            
+            if (type === 'web_app') {
+                script += `console.log("Starting web application script...");\n\n`;
+                script += `// DOM manipulation example\n`;
+                script += `document.addEventListener('DOMContentLoaded', function() {\n`;
+                script += `    console.log("DOM fully loaded");\n`;
+                script += `    \n`;
+                script += `    // Add event listeners\n`;
+                script += `    const buttons = document.querySelectorAll('button');\n`;
+                script += `    buttons.forEach(button => {\n`;
+                script += `        button.addEventListener('click', function() {\n`;
+                script += `            console.log('Button clicked:', this.textContent);\n`;
+                script += `        });\n`;
+                script += `    });\n`;
+                script += `});\n\n`;
+                script += `// API call example\n`;
+                script += `async function fetchData() {\n`;
+                script += `    try {\n`;
+                script += `        const response = await fetch('/api/data');\n`;
+                script += `        const data = await response.json();\n`;
+                script += `        console.log('Data received:', data);\n`;
+                script += `        return data;\n`;
+                script += `    } catch (error) {\n`;
+                script += `        console.error('Error fetching data:', error);\n`;
+                script += `    }\n`;
+                script += `}\n`;
+            } else {
+                script += `console.log("Running script: ${name}");\n`;
+                script += `console.log("Purpose: ${purpose}");\n`;
+                script += `console.log("Script execution completed.");\n`;
+            }
+            
+            return script;
+        }
+
+        function generatePHPScript(type, os, device, name, purpose, parameters) {
+            let script = `<?php\n`;
+            script += `// PHP Script\n`;
+            script += `// ${purpose}\n\n`;
+            
+            if (type === 'web_app') {
+                script += `echo "Starting web application script...\\n";\n\n`;
+                script += `// Database connection example\n`;
+                script += `try {\n`;
+                script += `    $pdo = new PDO('mysql:host=localhost;dbname=test', 'username', 'password');\n`;
+                script += `    echo "Database connected successfully\\n";\n`;
+                script += `    \n`;
+                script += `    // Query example\n`;
+                script += `    $stmt = $pdo->query('SELECT * FROM users LIMIT 10');\n`;
+                script += `    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);\n`;
+                script += `    echo "Fetched \" . count($users) . \" users\\n";\n`;
+                script += `    \n`;
+                script += `} catch (PDOException $e) {\n`;
+                script += `    echo "Database error: \" . $e->getMessage() . \"\\n";\n`;
+                script += `}\n\n`;
+                script += `// File handling example\n`;
+                script += `$filename = 'data.txt';\n`;
+                script += `if (file_exists($filename)) {\n`;
+                script += `    $content = file_get_contents($filename);\n`;
+                script += `    echo "File content: \" . substr($content, 0, 100) . \"...\\n";\n`;
+                script += `} else {\n`;
+                script += `    echo "File not found: $filename\\n";\n`;
+                script += `}\n`;
+            } else {
+                script += `echo "Running script: ${name}\\n";\n`;
+                script += `echo "Purpose: ${purpose}\\n";\n`;
+                script += `echo "Script execution completed.\\n";\n`;
+            }
+            
+            script += `?>\n`;
+            
+            return script;
+        }
+
+        function applySyntaxHighlighting(code, language) {
+            // Basic syntax highlighting
+            return code
+                .replace(/(#.*)/g, '<span class="code-comment">$1</span>')
+                .replace(/(\/\/.*)/g, '<span class="code-comment">$1</span>')
+                .replace(/(".*?")/g, '<span class="code-string">$1</span>')
+                .replace(/(\'.*?\')/g, '<span class="code-string">$1</span>')
+                .replace(/\b(def|class|import|from|if|else|elif|for|while|return|function|var|let|const)\b/g, '<span class="code-keyword">$1</span>')
+                .replace(/\b([0-9]+)\b/g, '<span class="code-number">$1</span>')
+                .replace(/(\w+)\s*\(/g, '<span class="code-function">$1</span>(')
+                .replace(/(\$\w+)/g, '<span class="code-parameter">$1</span>');
+        }
+
+        function validateCode(code, language) {
+            const validationOutput = document.getElementById('validationOutput');
+            let messages = [];
+            
+            // Basic validation rules
+            if (code.includes('TODO')) {
+                messages.push('<span style="color: #ffbd2e">⚠️ WARNING: TODO comments found</span>');
+            }
+            
+            if (code.includes('FIXME')) {
+                messages.push('<span style="color: #ff5f56">❌ ERROR: FIXME markers found</span>');
+            }
+            
+            // Language-specific validations
+            switch(language) {
+                case 'bash':
+                    if (!code.includes('#!/bin/bash')) {
+                        messages.push('<span style="color: #ffbd2e">⚠️ WARNING: Missing bash shebang</span>');
+                    }
+                    break;
+                case 'python':
+                    if (!code.includes('#!/usr/bin/env python3')) {
+                        messages.push('<span style="color: #ffbd2e">⚠️ WARNING: Missing Python shebang</span>');
+                    }
+                    break;
+                case 'powershell':
+                    if (!code.includes('# PowerShell Script')) {
+                        messages.push('<span style="color: #ffbd2e">⚠️ WARNING: Missing PowerShell identifier</span>');
+                    }
+                    break;
+                case 'javascript':
+                    if (!code.includes('// JavaScript Script')) {
+                        messages.push('<span style="color: #ffbd2e">⚠️ WARNING: Missing JavaScript identifier</span>');
+                    }
+                    break;
+                case 'php':
+                    if (!code.includes('<?php')) {
+                        messages.push('<span style="color: #ffbd2e">⚠️ WARNING: Missing PHP opening tag</span>');
+                    }
+                    break;
+            }
+            
+            // Check for common security issues
+            if (code.includes('sudo') && !code.includes('security check')) {
+                messages.push('<span style="color: #ffbd2e">⚠️ SECURITY: Sudo usage detected</span>');
+            }
+            
+            if (code.includes('rm -rf') && !code.includes('safety check')) {
+                messages.push('<span style="color: #ff5f56">❌ SECURITY: Dangerous rm -rf command</span>');
+            }
+            
+            if (messages.length === 0) {
+                messages.push('<span style="color: #27c93f">✅ CODE VALIDATION PASSED</span>');
+                messages.push('<span style="color: #6a9955">// No critical issues detected</span>');
+            } else {
+                messages.unshift('<span style="color: #ffbd2e">🔍 VALIDATION REPORT:</span>');
+            }
+            
+            // Add basic metrics
+            const lines = code.split('\n').length;
+            const size = new Blob([code]).size;
+            messages.push(`<span style="color: #569cd6">📊 ${lines} lines, ${size} bytes</span>`);
+            
+            validationOutput.innerHTML = messages.join('<br>');
+        }
+
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.className = `status-message status-${type}`;
+            
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 3000);
+        }
+
+        function downloadScript() {
+            const output = currentRawScript || document.getElementById('output').textContent;
+            const scriptName = document.getElementById('scriptName').value || 'generated_script';
+            const language = document.getElementById('scriptLanguage').value;
+            
+            let extension = '.sh';
+            switch(language) {
+                case 'python': extension = '.py'; break;
+                case 'powershell': extension = '.ps1'; break;
+                case 'javascript': extension = '.js'; break;
+                case 'php': extension = '.php'; break;
+            }
+            
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${scriptName}${extension}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('DOWNLOAD COMPLETED', 'success');
+        }
+
+        function copyToClipboard() {
+            const output = currentRawScript || document.getElementById('output').textContent;
+            navigator.clipboard.writeText(output).then(() => {
+                showStatus('COPIED TO CLIPBOARD', 'success');
+            }).catch(err => {
+                showStatus('COPY FAILED', 'error');
+            });
+        }
+
+        function refixCode() {
+            const output = document.getElementById('output').textContent;
+            const language = document.getElementById('scriptLanguage').value;
+            
+            // Apply syntax highlighting again
+            document.getElementById('output').innerHTML = applySyntaxHighlighting(output, language);
+            
+            showStatus('CODE REFIXED', 'success');
+        }
+
+        function debugAndRewrite() {
+            const scriptType = document.getElementById('scriptType').value;
+            const targetOS = document.getElementById('targetOS').value;
+            const deviceType = document.getElementById('deviceType').value;
+            const language = document.getElementById('scriptLanguage').value;
+            const scriptName = document.getElementById('scriptName').value || 'generated_script';
+            const purpose = document.getElementById('scriptPurpose').value;
+            const parameters = document.getElementById('scriptParameters').value;
+            const prefix = document.getElementById('codePrefix').value;
+
+            showStatus('DEBUGGING AND REWRITING SCRIPT...', 'success');
+
+            // Generate a fresh script with the same parameters
+            const script = createScript(scriptType, targetOS, deviceType, language, scriptName, purpose, parameters, prefix);
+            
+            // Store the raw script for download
+            currentRawScript = script;
+            
+            document.getElementById('output').innerHTML = applySyntaxHighlighting(script, language);
+            
+            // Validate the generated code
+            validateCode(script, language);
+            
+            showStatus('SCRIPT DEBUGGED AND REWRITTEN', 'success');
+        }
+
+        // Initialize with a sample script
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                generateScript();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
